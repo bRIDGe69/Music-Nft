@@ -1,27 +1,71 @@
+
 body {
-  font-family: "Arial", sans-serif;
-  background-color: #fff;
-  margin: 0;
-  padding: 0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0;
 }
 
-h1 {
-  color: #33ccff;
-  text-align: center;
+header {
+    background-color: #333;
+    color: white;
+    padding: 1em;
+    width: 100%;
+    text-align: center;
 }
 
-p {
-  font-size: 1.2em;
-  line-height: 1.5;
-  color: #000;
+main {
+    width: 80%;
+    margin: 2em auto;
+}
+
+#upload-section, #music-list, #music-player {
+    background: white;
+    padding: 1em;
+    margin-bottom: 2em;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 button {
-  background-color: #33ccff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 12px;
+    padding: 0.5em 1em;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+#tracks div {
+    padding: 0.5em 0;
+    cursor: pointer;
+}
+
+#tracks div:hover {
+    background-color: #f0f0f0;
+}
+
+/* Add styles for notifications and progress */
+.notification {
+    padding: 1em;
+    margin: 1em 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.notification.success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.notification.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
 }
