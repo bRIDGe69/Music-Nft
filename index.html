@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +9,12 @@
 <body>
     <header>
         <h1>NFT Music Marketplace</h1>
+        <nav>
+            <a href="#upload-section">Upload</a>
+            <a href="#music-list">Tracks</a>
+            <a href="#profile">Profile</a>
+            <a href="#dashboard">Dashboard</a>
+        </nav>
     </header>
     <main>
         <section id="upload-section">
@@ -34,6 +39,54 @@
                 <source id="audio-source" src="" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
+        </section>
+        <section id="profile">
+            <h2>Your Profile</h2>
+            <form id="profile-form">
+                <input type="text" id="username" placeholder="Username">
+                <input type="email" id="email" placeholder="Email">
+                <button type="submit">Save</button>
+            </form>
+        </section>
+        <section id="dashboard">
+            <h2>Dashboard</h2>
+            <div id="user-tracks"></div>
+            <div id="user-playlists"></div>
+            <div id="user-purchases"></div>
+        </section>
+        <section id="search-filter">
+            <h2>Search and Filter Tracks</h2>
+            <input type="text" id="search-input" placeholder="Search by track name, artist, genre">
+            <button id="search-button">Search</button>
+            <div id="filter-options">
+                <label>
+                    <input type="checkbox" id="filter-genre" value="genre">
+                    Genre
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-popularity" value="popularity">
+                    Popularity
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-recent" value="recent">
+                    Recently Added
+                </label>
+            </div>
+        </section>
+        <section id="comments-ratings">
+            <h2>Comments and Ratings</h2>
+            <div id="comments">
+                <h3>Comments</h3>
+                <textarea id="comment-input" placeholder="Add a comment"></textarea>
+                <button id="add-comment-button">Add Comment</button>
+                <div id="comments-list"></div>
+            </div>
+            <div id="ratings">
+                <h3>Ratings</h3>
+                <input type="number" id="rating-input" min="1" max="5" placeholder="Rate (1-5)">
+                <button id="add-rating-button">Add Rating</button>
+                <div id="ratings-list"></div>
+            </div>
         </section>
     </main>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.3.5/dist/web3.min.js"></script>
