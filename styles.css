@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
     font-family: Arial, sans-serif;
@@ -17,12 +20,26 @@ header {
     text-align: center;
 }
 
+header nav {
+    margin-top: 1em;
+}
+
+header nav a {
+    color: white;
+    margin: 0 1em;
+    text-decoration: none;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
 main {
     width: 80%;
     margin: 2em auto;
 }
 
-#upload-section, #music-list, #music-player {
+#upload-section, #music-list, #music-player, #profile, #dashboard, #search-filter, #comments-ratings {
     background: white;
     padding: 1em;
     margin-bottom: 2em;
@@ -41,16 +58,26 @@ button:hover {
     background-color: #555;
 }
 
-#tracks div {
+#tracks div, #user-tracks div, #user-playlists div, #user-purchases div {
     padding: 0.5em 0;
     cursor: pointer;
 }
 
-#tracks div:hover {
+#tracks div:hover, #user-tracks div:hover, #user-playlists div:hover, #user-purchases div:hover {
     background-color: #f0f0f0;
 }
 
-/* Add styles for notifications and progress */
+#search-input, #comment-input, #rating-input {
+    width: 100%;
+    padding: 0.5em;
+    margin-bottom: 1em;
+}
+
+#filter-options {
+    display: flex;
+    gap: 1em;
+}
+
 .notification {
     padding: 1em;
     margin: 1em 0;
