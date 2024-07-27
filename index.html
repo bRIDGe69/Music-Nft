@@ -3,48 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFT Music Marketplace</title>
+    <title>NFT Music Website</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>NFT Music Marketplace</h1>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#nfts">NFTs</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
+        <h1>Welcome to NFT Music</h1>
     </header>
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#nfts">NFTs</a></li>
+            <li><a href="#artists">Artists</a></li>
+            <li><a href="#news">News</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
     <main>
         <section id="home">
-            <h2>Discover Unique Music NFTs</h2>
-            <p>Explore, buy, and sell unique music NFTs from various artists around the world.</p>
-            <button onclick="connectWallet()">Connect Wallet</button>
+            <h2>Home Section</h2>
+            <p>Welcome to the home of NFT Music, where you can explore unique music NFTs.</p>
+        </section>
+        <section id="about">
+            <h2>About Section</h2>
+            <p>Learn more about our platform and mission.</p>
         </section>
         <section id="nfts">
             <h2>Featured NFTs</h2>
             <div class="nft-gallery">
                 <div class="nft-item">
-                    <img src="images/nft1.jpg" alt="NFT 1">
-                    <h3>Title 1</h3>
-                    <p>Artist 1</p>
-                    <button onclick="buyNFT(1)">Buy</button>
+                    <img src="nft1.jpg" alt="NFT 1">
+                    <p>NFT 1 Description</p>
                 </div>
                 <div class="nft-item">
-                    <img src="images/nft2.jpg" alt="NFT 2">
-                    <h3>Title 2</h3>
-                    <p>Artist 2</p>
-                    <button onclick="buyNFT(2)">Buy</button>
+                    <img src="nft2.jpg" alt="NFT 2">
+                    <p>NFT 2 Description</p>
                 </div>
-                <!-- Add more NFTs as needed -->
+                <!-- Add more NFT items here -->
             </div>
+        </section>
+        <section id="artists">
+            <h2>Featured Artists</h2>
+            <div class="artist-gallery">
+                <div class="artist-item">
+                    <img src="artist1.jpg" alt="Artist 1">
+                    <p>Artist 1 Bio</p>
+                </div>
+                <div class="artist-item">
+                    <img src="artist2.jpg" alt="Artist 2">
+                    <p>Artist 2 Bio</p>
+                </div>
+                <!-- Add more artist items here -->
+            </div>
+        </section>
+        <section id="news">
+            <h2>Latest News</h2>
+            <article>
+                <h3>News Title 1</h3>
+                <p>Summary of news article 1...</p>
+                <a href="#">Read more</a>
+            </article>
+            <article>
+                <h3>News Title 2</h3>
+                <p>Summary of news article 2...</p>
+                <a href="#">Read more</a>
+            </article>
+            <!-- Add more news articles here -->
+        </section>
+        <section id="contact">
+            <h2>Contact Section</h2>
+            <p>Get in touch with us through email or social media.</p>
         </section>
     </main>
     <footer>
-        <p>&copy; 2024 NFT Music Marketplace</p>
+        <p>&copy; 2024 NFT Music</p>
     </footer>
     <script src="script.js"></script>
 </body>
