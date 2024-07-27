@@ -136,15 +136,3 @@ async function loadTracks() {
 
 loadWeb3();
 loadTracks();
-
-// Placeholder function to simulate wallet connection
-function connectWallet() {
-    alert("Connecting to wallet...");
-    // Add blockchain wallet connection logic here
-}
-
-// Placeholder function to simulate buying an NFT
-function buyNFT(nftId) {
-    alert("Buying NFT with ID: " + nftId);
-    // Add blockchain transaction logic here
-}
