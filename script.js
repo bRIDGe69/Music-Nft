@@ -1,4 +1,3 @@
-
 console.log('Script loaded');
 
 async function loadWeb3() {
@@ -31,17 +30,21 @@ async function createNFT(tokenURI) {
         const accounts = await web3.eth.getAccounts();
         const contract = await loadContract();
         await contract.methods.createNFT(tokenURI).send({ from: accounts[0] });
-        showNotification('NFT created successfully!');
+        showNotification('NFT created successfully!', 'success');
         console.log('NFT created successfully');
     } catch (error) {
         console.error('Error creating NFT', error);
-        if (error.code === 4001) {
-            showNotification('Transaction rejected by user.', 'error');
-        } else if (error.message.includes('insufficient funds')) {
-            showNotification('Insufficient funds for gas fee.', 'error');
-        } else {
-            showNotification('Failed to create NFT.', 'error');
-        }
+        handleError(error);
+    }
+}
+
+function handleError(error) {
+    if (error.code === 4001) {
+        showNotification('Transaction rejected by user.', 'error');
+    } else if (error.message.includes('insufficient funds')) {
+        showNotification('Insufficient funds for gas fee.', 'error');
+    } else {
+        showNotification('Failed to create NFT.', 'error');
     }
 }
 
@@ -51,23 +54,21 @@ function showNotification(message, type = 'success') {
     notification.className = `notification ${type}`;
     notification.textContent = message;
     notifications.appendChild(notification);
-    setTimeout(() => {
-        notifications.removeChild(notification);
-    }, 3000);
+    setTimeout(() => notification.remove(), 5000);
 }
 
-document.getElementById('upload-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const file = document.getElementById('music-file').files[0];
-    console.log('File selected', file);
+document.getElementById('upload-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const fileInput = document.getElementById('music-file');
+    const file = fileInput.files[0];
+
     if (!file) {
         showNotification('Please select a file to upload.', 'error');
         return;
     }
 
-    const validTypes = ['audio/mpeg', 'audio/wav', 'audio/flac'];
-    if (!validTypes.includes(file.type)) {
-        showNotification('Unsupported file type. Please upload an MP3, WAV, or FLAC file.', 'error');
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        showNotification('File size exceeds 10MB limit. Please upload a smaller file.', 'error');
         return;
     }
 
@@ -85,33 +86,22 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
         });
 
         if (response.ok) {
-            response.body.on('data', (chunk) => {
-                const percentComplete = (chunk.byteLength / response.headers.get('Content-Length')) * 100;
-                progressBar.value = percentComplete;
-            });
-
-            response.body.on('end', async () => {
-                uploadProgress.style.display = 'none';
-                showNotification('File uploaded successfully!');
-                const data = await response.json();
-                const tokenURI = data.fileUrl;
-                await createNFT(tokenURI);
-                loadTracks();
-            });
+            const data = await response.json();
+            const tokenURI = data.fileUrl;
+            await createNFT(tokenURI);
+            showNotification('File uploaded successfully!', 'success');
+            loadTracks();
         } else {
-            uploadProgress.style.display = 'none';
             showNotification('File upload failed.', 'error');
-            console.error('File upload failed', response);
         }
     } catch (error) {
-        uploadProgress.style.display = 'none';
         showNotification('An error occurred during upload.', 'error');
-        console.error('Upload error', error);
+    } finally {
+        uploadProgress.style.display = 'none';
     }
 });
 
 async function loadTracks() {
-    console.log('Loading tracks');
     try {
         const response = await fetch('/tracks');
         const tracks = await response.json();
@@ -120,31 +110,31 @@ async function loadTracks() {
         tracks.forEach(track => {
             const trackElement = document.createElement('div');
             trackElement.textContent = track.name;
+            trackElement.tabIndex = 0;
             trackElement.addEventListener('click', () => {
-                document.getElementById('audio-source').src = track.url;
-                document.getElementById('player').load();
-                document.getElementById('player').play();
+                playTrack(track.url);
+            });
+            trackElement.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    playTrack(track.url);
+                }
             });
             tracksDiv.appendChild(trackElement);
         });
-        console.log('Tracks loaded', tracks);
     } catch (error) {
         showNotification('Failed to load tracks.', 'error');
-        console.error('Error loading tracks', error);
     }
 }
 
-loadWeb3();
-loadTracks();
-
-// Placeholder function to simulate wallet connection
-function connectWallet() {
-    alert("Connecting to wallet...");
-    // Add blockchain wallet connection logic here
+function playTrack(url) {
+    const audioSource = document.getElementById('audio-source');
+    const player = document.getElementById('player');
+    audioSource.src = url;
+    player.load();
+    player.play();
 }
 
-// Placeholder function to simulate buying an NFT
-function buyNFT(nftId) {
-    alert("Buying NFT with ID: " + nftId);
-    // Add blockchain transaction logic here
-}
+window.addEventListener('load', () => {
+    loadWeb3();
+    loadTracks();
+});

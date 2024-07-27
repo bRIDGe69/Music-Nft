@@ -2,62 +2,73 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: #f0f0f0;
 }
 
 header {
     background-color: #333;
     color: white;
-    padding: 10px 20px;
+    padding: 1em;
+    width: 100%;
     text-align: center;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-nav ul li {
-    display: inline;
-    margin: 0 10px;
-}
-
-nav ul li a {
-    color: white;
-    text-decoration: none;
 }
 
 main {
-    padding: 20px;
+    width: 80%;
+    margin: 2em auto;
 }
 
-.nft-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+section {
+    background: white;
+    padding: 1em;
+    margin-bottom: 2em;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.nft-item {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    text-align: center;
-    width: 200px;
-}
-
-.nft-item img {
-    max-width: 100%;
-    border-radius: 5px;
-}
-
-footer {
+button {
+    padding: 0.5em 1em;
     background-color: #333;
     color: white;
-    text-align: center;
-    padding: 10px 0;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover, button:focus {
+    background-color: #555;
+}
+
+button:focus {
+    outline: 2px solid #333;
+}
+
+#tracks div {
+    padding: 0.5em 0;
+    cursor: pointer;
+}
+
+#tracks div:hover, #tracks div:focus {
+    background-color: #f0f0f0;
+}
+
+.notification {
+    padding: 1em;
+    margin: 1em 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.notification.success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.notification.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
 }
