@@ -115,3 +115,52 @@ async function updateMetadata(contract, account, fileUrl, newMetadata) {
     const options = {
         from: account,
         gas: await transaction
+async function updateMetadata(contract, account, fileUrl, newMetadata) {
+    const transaction = contract.methods.updateMetadata(fileUrl, newMetadata);
+    const options = {
+        from: account,
+        gas: await transaction.estimateGas(),
+    };
+
+    transaction.send(options)
+        .on('transactionHash', hash => {
+            console.log('Transaction Hash:', hash);
+        })
+        .on('receipt', receipt => {
+            console.log('Metadata Update Receipt:', receipt);
+        })
+        .on('error', error => {
+            console.error('Transaction Error:', error);
+        });
+}
+
+// Example function: burn NFT
+async function burnNFT(contract, account, tokenId) {
+    const transaction = contract.methods.burn(tokenId);
+    const options = {
+        from: account,
+        gas: await transaction.estimateGas(),
+    };
+
+    transaction.send(options)
+        .on('transactionHash', hash => {
+            console.log('Transaction Hash:', hash);
+        })
+        .on('receipt', receipt => {
+            console.log('NFT Burn Receipt:', receipt);
+        })
+        .on('error', error => {
+            console.error('Transaction Error:', error);
+        });
+}
+
+// Example function: get NFT details
+async function getNFTDetails(contract, tokenId) {
+    try {
+        const details = await contract.methods.tokenURI(tokenId).call();
+        console.log('NFT Details:', details);
+        return details;
+    } catch (error) {
+        console.error('Error fetching NFT details:', error);
+    }
+}
