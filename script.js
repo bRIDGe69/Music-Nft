@@ -1,166 +1,117 @@
-console.log('Script loaded');
-
-async function loadWeb3() {
-    if (window.ethereum) {
-        window.web3 = new Web3(window.ethereum);
-        await window.ethereum.enable();
-        console.log('Ethereum enabled');
-    } else if (window.web3) {
-        window.web3 = new Web3(window.web3.currentProvider);
-        console.log('Web3 enabled via current provider');
-    } else {
-        alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
-    }
-}
-
-async function loadContract() {
-    const response = await fetch('/MusicNFT.json');
-    const data = await response.json();
-    const netId = await web3.eth.net.getId();
-    const deployedNetwork = data.networks[netId];
-    return new web3.eth.Contract(data.abi, deployedNetwork && deployedNetwork.address);
-}
-
-async function createNFT(tokenURI, agreement) {
-    const accounts = await web3.eth.getAccounts();
-    const contract = await loadContract();
-    await contract.methods.createNFT(tokenURI).send({ from: accounts[0] });
-}
-
-document.getElementById('upload-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const file = document.getElementById('music-file').files[0];
-    const tokenURI = 'your-token-uri'; // Mock token URI
-    await createNFT(tokenURI);
-});
-
-document.getElementById('profile-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    localStorage.setItem('username', username);
-    localStorage.setItem('email', email);
-    showNotification('Profile updated successfully!', 'success');
-});
-
-function loadUserProfile() {
-    const username = localStorage.getItem('username');
-    const email = localStorage.getItem('email');
-    if (username) {
-        document.getElementById('username').value = username;
-    }
-    if (email) {
-        document.getElementById('email').value = email;
-    }
-}
-
-function loadUserDashboard() {
-    const userTracks = JSON.parse(localStorage.getItem('userTracks')) || [];
-    const userPlaylists = JSON.parse(localStorage.getItem('userPlaylists')) || [];
-    const userPurchases = JSON.parse(localStorage.getItem('userPurchases')) || [];
-
-    const userTracksDiv = document.getElementById('user-tracks');
-    userTracksDiv.innerHTML = '<h3>Your Uploaded Tracks</h3>';
-    userTracks.forEach(track => {
-        const trackElement = document.createElement('div');
-        trackElement.textContent = track.name;
-        userTracksDiv.appendChild(trackElement);
-    });
-
-    const userPlaylistsDiv = document.getElementById('user-playlists');
-    userPlaylistsDiv.innerHTML = '<h3>Your Playlists</h3>';
-    userPlaylists.forEach(playlist => {
-        const playlistElement = document.createElement('div');
-        playlistElement.textContent = playlist.name;
-        userPlaylistsDiv.appendChild(playlistElement);
-    });
-
-    const userPurchasesDiv = document.getElementById('user-purchases');
-    userPurchasesDiv.innerHTML = '<h3>Your Purchased NFTs</h3>';
-    userPurchases.forEach(purchase => {
-        const purchaseElement = document.createElement('div');
-        purchaseElement.textContent = purchase.name;
-        userPurchasesDiv.appendChild(purchaseElement);
-    });
-}
-
-document.getElementById('search-button').addEventListener('click', () => {
-    const searchInput = document.getElementById('search-input').value.toLowerCase();
-    const tracksDiv = document.getElementById('tracks');
-    const trackElements = tracksDiv.getElementsByTagName('div');
-    Array.from(trackElements).forEach(trackElement => {
-        const trackName = trackElement.textContent.toLowerCase();
-        if (trackName.includes(searchInput)) {
-            trackElement.style.display = '';
-        } else {
-            trackElement.style.display = 'none';
+document.getElementById('connectWallet').addEventListener('click', async function() {
+    if (typeof window.ethereum !== 'undefined') {
+        try {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            const account = accounts[0];
+            document.getElementById('walletAddress').innerText = `Connected: ${account}`;
+            web3 = new Web3(window.ethereum);
+        } catch (error) {
+            console.error('User denied account access', error);
+            document.getElementById('walletAddress').innerText = 'Connection failed. Please try again.';
         }
-    });
-});
-
-document.getElementById('add-comment-button').addEventListener('click', () => {
-    const commentInput = document.getElementById('comment-input').value;
-    if (commentInput) {
-        const commentsList = document.getElementById('comments-list');
-        const commentElement = document.createElement('div');
-        commentElement.textContent = commentInput;
-        commentsList.appendChild(commentElement);
-        document.getElementById('comment-input').value = '';
-        showNotification('Comment added successfully!', 'success');
     } else {
-        showNotification('Comment cannot be empty.', 'error');
+        console.log('No Ethereum provider detected');
+        document.getElementById('walletAddress').innerText = 'No Ethereum provider detected';
     }
 });
 
-document.getElementById('add-rating-button').addEventListener('click', () => {
-    const ratingInput = document.getElementById('rating-input').value;
-    if (ratingInput >= 1 && ratingInput <= 5) {
-        const ratingsList = document.getElementById('ratings-list');
-        const ratingElement = document.createElement('div');
-        ratingElement.textContent = `Rating: ${ratingInput}`;
-        ratingsList.appendChild(ratingElement);
-        document.getElementById('rating-input').value = '';
-        showNotification('Rating added successfully!', 'success');
-    } else {
-        showNotification('Rating must be between 1 and 5.', 'error');
+document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const fileInput = document.getElementById('musicFile');
+    const file = fileInput.files[0];
+    if (!file) {
+        document.getElementById('uploadStatus').innerText = 'Please select a file to upload.';
+        return;
     }
+
+    document.getElementById('spinner').style.display = 'block';
+
+    // Read file as Data URL and store in localStorage
+    const reader = new FileReader();
+    reader.onload = async function(event) {
+        const fileUrl = event.target.result;
+        localStorage.setItem('uploadedMusic', fileUrl);
+
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('uploadStatus').innerText = 'File uploaded successfully!';
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audioSource = document.getElementById('audioSource');
+        audioSource.src = fileUrl;
+        audioPlayer.classList.remove('hidden');
+        audioPlayer.load();
+
+        // Smart contract interaction options
+        await handleContractOptions(fileUrl);
+    };
+    reader.readAsDataURL(file);
 });
 
-window.addEventListener('load', () => {
-    loadUserProfile();
-    loadUserDashboard();
-    loadWeb3();
-    loadTracks();
-});
+async function handleContractOptions(fileUrl) {
+    // Assuming web3 is already initialized
+    const contractAddress = 'YOUR_SMART_CONTRACT_ADDRESS';
+    const contractABI = YOUR_SMART_CONTRACT_ABI;
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
 
-function showNotification(message, type = 'success') {
-    const notifications = document.getElementById('notifications');
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    notifications.appendChild(notification);
-    setTimeout(() => {
-        notifications.removeChild(notification);
-    }, 5000); // Increased display duration for better user visibility
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+
+    document.getElementById('transactionSpinner').style.display = 'block';
+
+    // Example minting function
+    await mintNFT(contract, account, fileUrl);
+
+    // Additional smart contract functions
+    // Example: transfer ownership
+    await transferOwnership(contract, account, 'NEW_OWNER_ADDRESS');
+
+    // Example: update metadata
+    await updateMetadata(contract, account, fileUrl, 'NEW_METADATA');
+
+    document.getElementById('transactionSpinner').style.display = 'none';
 }
 
-async function loadTracks() {
-    try {
-        const response = await fetch('/tracks');
-        const tracks = await response.json();
-        const tracksDiv = document.getElementById('tracks');
-        tracksDiv.innerHTML = '';
-        tracks.forEach(track => {
-            const trackElement = document.createElement('div');
-            trackElement.textContent = track.name;
-            trackElement.addEventListener('click', () => {
-                document.getElementById('audio-source').src = track.url;
-                document.getElementById('player').load();
-                document.getElementById('player').play();
-            });
-            tracksDiv.appendChild(trackElement);
+async function mintNFT(contract, account, fileUrl) {
+    const transaction = contract.methods.mintNFT(account, fileUrl);
+    const options = {
+        from: account,
+        gas: await transaction.estimateGas(),
+    };
+
+    transaction.send(options)
+        .on('transactionHash', hash => {
+            console.log('Transaction Hash:', hash);
+        })
+        .on('receipt', receipt => {
+            console.log('Transaction Receipt:', receipt);
+            document.getElementById('uploadStatus').innerText = 'NFT minted successfully!';
+        })
+        .on('error', error => {
+            console.error('Transaction Error:', error);
+            document.getElementById('uploadStatus').innerText = `NFT minting failed: ${error.message}`;
         });
-    } catch (error) {
-        showNotification('Failed to load tracks.', 'error');
-    }
 }
+
+async function transferOwnership(contract, account, newOwner) {
+    const transaction = contract.methods.transferOwnership(newOwner);
+    const options = {
+        from: account,
+        gas: await transaction.estimateGas(),
+    };
+
+    transaction.send(options)
+        .on('transactionHash', hash => {
+            console.log('Transaction Hash:', hash);
+        })
+        .on('receipt', receipt => {
+            console.log('Ownership Transfer Receipt:', receipt);
+        })
+        .on('error', error => {
+            console.error('Transaction Error:', error);
+        });
+}
+
+async function updateMetadata(contract, account, fileUrl, newMetadata) {
+    const transaction = contract.methods.updateMetadata(fileUrl, newMetadata);
+    const options = {
+        from: account,
+        gas: await transaction
