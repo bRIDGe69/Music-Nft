@@ -3,82 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFT Music Website</title>
+    <title>NFT Music Marketplace</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Welcome to NFT Music</h1>
+        <h1>NFT Music Marketplace</h1>
+        <nav>
+            <a href="#about-section">About</a>
+            <a href="#upload-section">Upload</a>
+            <a href="#music-list">Tracks</a>
+            <a href="#profile">Profile</a>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#login-section">Login</a>
+            <a href="#register-section">Register</a>
+        </nav>
     </header>
-    <nav>
-        <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#nfts">NFTs</a></li>
-            <li><a href="#artists">Artists</a></li>
-            <li><a href="#news">News</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
     <main>
-        <section id="home">
-            <h2>Home Section</h2>
-            <p>Welcome to the home of NFT Music, where you can explore unique music NFTs.</p>
+        <section id="about-section">
+            <h2>About Me</h2>
+            <p>I am a solo artist offering unique music tracks as NFTs. You can mint my music for a small fee and own a piece of my creative work. Each track is a one-of-a-kind NFT that gives you exclusive rights to my music.</p>
+            <h3>Minting Agreements</h3>
+            <ul>
+                <li><strong>Exclusive Rights:</strong> The buyer owns the music track exclusively. Limited to 1 NFT per track.</li>
+                <li><strong>Limited Edition:</strong> Limited number of NFTs available for each track.</li>
+                <li><strong>Regular License:</strong> Unlimited NFTs available for each track with standard usage rights.</li>
+            </ul>
         </section>
-        <section id="about">
-            <h2>About Section</h2>
-            <p>Learn more about our platform and mission.</p>
+        <section id="upload-section">
+            <h2>Upload Your Music</h2>
+            <form id="upload-form">
+                <input type="file" id="music-file" accept="audio/*">
+                <select id="mint-agreement">
+                    <option value="exclusive">Exclusive Rights</option>
+                    <option value="limited">Limited Edition</option>
+                    <option value="regular">Regular License</option>
+                </select>
+                <button type="submit">Upload</button>
+            </form>
         </section>
-        <section id="nfts">
-            <h2>Featured NFTs</h2>
-            <div class="nft-gallery">
-                <div class="nft-item">
-                    <img src="nft1.jpg" alt="NFT 1">
-                    <p>NFT 1 Description</p>
-                </div>
-                <div class="nft-item">
-                    <img src="nft2.jpg" alt="NFT 2">
-                    <p>NFT 2 Description</p>
-                </div>
-                <!-- Add more NFT items here -->
+        <section id="upload-progress" style="display:none;">
+            <h3>Uploading...</h3>
+            <progress id="progress-bar" max="100" value="0"></progress>
+        </section>
+        <section id="notifications"></section>
+        <section id="music-list">
+            <h2>Available Tracks</h2>
+            <div id="tracks"></div>
+        </section>
+        <section id="music-player">
+            <h2>Now Playing</h2>
+            <audio id="player" controls>
+                <source id="audio-source" src="" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </section>
+        <section id="profile">
+            <h2>Your Profile</h2>
+            <form id="profile-form">
+                <input type="text" id="username" placeholder="Username">
+                <input type="email" id="email" placeholder="Email">
+                <button type="submit">Save</button>
+            </form>
+        </section>
+        <section id="dashboard">
+            <h2>Dashboard</h2>
+            <div id="user-tracks"></div>
+            <div id="user-playlists"></div>
+            <div id="user-purchases"></div>
+        </section>
+        <section id="search-filter">
+            <h2>Search and Filter Tracks</h2>
+            <input type="text" id="search-input" placeholder="Search by track name, artist, genre">
+            <button id="search-button">Search</button>
+            <div id="filter-options">
+                <label>
+                    <input type="checkbox" id="filter-genre" value="genre">
+                    Genre
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-popularity" value="popularity">
+                    Popularity
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-recent" value="recent">
+                    Recently Added
+                </label>
             </div>
         </section>
-        <section id="artists">
-            <h2>Featured Artists</h2>
-            <div class="artist-gallery">
-                <div class="artist-item">
-                    <img src="artist1.jpg" alt="Artist 1">
-                    <p>Artist 1 Bio</p>
-                </div>
-                <div class="artist-item">
-                    <img src="artist2.jpg" alt="Artist 2">
-                    <p>Artist 2 Bio</p>
-                </div>
-                <!-- Add more artist items here -->
+        <section id="comments-ratings">
+            <h2>Comments and Ratings</h2>
+            <div id="comments">
+                <h3>Comments</h3>
+                <textarea id="comment-input" placeholder="Add a comment"></textarea>
+                <button id="add-comment-button">Add Comment</button>
+                <div id="comments-list"></div>
+            </div>
+            <div id="ratings">
+                <h3>Ratings</h3>
+                <input type="number" id="rating-input" min="1" max="5" placeholder="Rate (1-5)">
+                <button id="add-rating-button">Add Rating</button>
+                <div id="ratings-list"></div>
             </div>
         </section>
-        <section id="news">
-            <h2>Latest News</h2>
-            <article>
-                <h3>News Title 1</h3>
-                <p>Summary of news article 1...</p>
-                <a href="#">Read more</a>
-            </article>
-            <article>
-                <h3>News Title 2</h3>
-                <p>Summary of news article 2...</p>
-                <a href="#">Read more</a>
-            </article>
-            <!-- Add more news articles here -->
+        <section id="login-section">
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Email">
+                <input type="password" id="login-password" placeholder="Password">
+                <button type="submit">Login</button>
+            </form>
         </section>
-        <section id="contact">
-            <h2>Contact Section</h2>
-            <p>Get in touch with us through email or social media.</p>
+        <section id="register-section">
+            <h2>Register</h2>
+            <form id="register-form">
+                <input type="text" id="register-username" placeholder="Username">
+                <input type="email" id="register-email" placeholder="Email">
+                <input type="password" id="register-password" placeholder="Password">
+                <button type="submit">Register</button>
+            </form>
         </section>
     </main>
-    <footer>
-        <p>&copy; 2024 NFT Music</p>
-    </footer>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.3.5/dist/web3.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
