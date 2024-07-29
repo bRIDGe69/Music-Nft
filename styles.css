@@ -1,6 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 body {
     font-family: Arial, sans-serif;
@@ -11,17 +8,7 @@ body {
     align-items: center;
     background-color: #f0f0f0;
 }
-body {
-    background-image: url('images/A_sophisticated,_clean,_and_professional-looking_c.png');
-    background-size: cover;
-    background-position: center;
-}
-#spinner, #transactionSpinner {
-    display: none;
-}
-.hidden {
-    display: none;
-}
+
 header {
     background-color: #333;
     color: white;
@@ -68,41 +55,18 @@ button:hover {
     background-color: #555;
 }
 
-#tracks div, #user-tracks div, #user-playlists div, #user-purchases div {
-    padding: 0.5em 0;
-    cursor: pointer;
-}
-
-#tracks div:hover, #user-tracks div:hover, #user-playlists div:hover, #user-purchases div:hover {
-    background-color: #f0f0f0;
-}
-
-#search-input, #comment-input, #rating-input, #login-email, #login-password, #register-username, #register-email, #register-password {
-    width: 100%;
-    padding: 0.5em;
-    margin-bottom: 1em;
-}
-
-#filter-options {
+#nft-marketplace, #user-nfts, #user-tracks, #user-analytics, #royalty-distribution {
     display: flex;
-    gap: 1em;
+    flex-wrap: wrap;
 }
 
-.notification {
+.card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     padding: 1em;
-    margin: 1em 0;
-    border: 1px solid transparent;
-    border-radius: 4px;
-}
-
-.notification.success {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-}
-
-.notification.error {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+    margin: 1em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: calc(33.333% - 2em);
+    box-sizing: border-box;
 }
