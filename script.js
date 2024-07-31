@@ -113,14 +113,19 @@ async function uploadToIPFS(file) {
 
 async function loadContract() {
     try {
-        const response = await fetch('/contracts/NFTMusic.json');
+        const response = await fetch('contracts/NFTMusic.json'); // Ensure this path is correct
         const data = await response.json();
         const netId = await web3.eth.net.getId();
         const deployedNetwork = data.networks[netId];
+        
+        if (!deployedNetwork) {
+            throw new Error('Contract not deployed on the current network');
+        }
+
         return new web3.eth.Contract(data.abi, deployedNetwork && deployedNetwork.address);
     } catch (error) {
         console.error('Error loading contract:', error);
-        alert('Failed to load contract. Please try again.');
+        alert('Failed to load contract. Please check the console for more details.');
         throw error;
     }
 }
