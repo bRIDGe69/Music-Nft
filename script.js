@@ -1,8 +1,12 @@
+### Enhanced `script.js`
+
+```javascript
 document.addEventListener('DOMContentLoaded', () => {
     loadWeb3();
     loadUserProfile();
     loadUserDashboard();
     loadMarketplace();
+    loadWeb3Activity();
 
     document.getElementById('upload-form').addEventListener('submit', handleUpload);
     document.getElementById('profile-form').addEventListener('submit', saveUserProfile);
@@ -13,120 +17,203 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadWeb3() {
-    if (window.ethereum) {
-        window.web3 = new Web3(window.ethereum);
-        await window.ethereum.enable();
-    } else if (window.web3) {
-        window.web3 = new Web3(window.web3.currentProvider);
-    } else {
-        alert('Please install MetaMask to use this feature!');
+    try {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+            await window.ethereum.enable();
+        } else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider);
+        } else {
+            alert('Please install MetaMask to use this feature!');
+        }
+    } catch (error) {
+        console.error('Error loading web3:', error);
+        alert('Failed to load web3. Please try again.');
     }
 }
 
 function loadUserProfile() {
-    const username = localStorage.getItem('username');
-    const email = localStorage.getItem('email');
-    if (username) document.getElementById('username').value = username;
-    if (email) document.getElementById('email').value = email;
+    try {
+        const username = localStorage.getItem('username');
+        const email = localStorage.getItem('email');
+        if (username) document.getElementById('username').value = username;
+        if (email) document.getElementById('email').value = email;
+    } catch (error) {
+        console.error('Error loading user profile:', error);
+        alert('Failed to load user profile. Please try again.');
+    }
 }
 
 function saveUserProfile(event) {
     event.preventDefault();
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    localStorage.setItem('username', username);
-    localStorage.setItem('email', email);
-    alert('Profile saved successfully!');
+    try {
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        localStorage.setItem('username', username);
+        localStorage.setItem('email', email);
+        alert('Profile saved successfully!');
+    } catch (error) {
+        console.error('Error saving user profile:', error);
+        alert('Failed to save user profile. Please try again.');
+    }
 }
+
 async function handleUpload(event) {
     event.preventDefault();
-    const file = document.getElementById('music-file').files[0];
-    const title = document.getElementById('music-title').value;
-    const artist = document.getElementById('music-artist').value;
-    const album = document.getElementById('music-album').value;
-    const genre = document.getElementById('music-genre').value;
-    const agreement = document.getElementById('mint-agreement').value;
+    try {
+        const file = document.getElementById('music-file').files[0];
+        const title = document.getElementById('music-title').value;
+        const artist = document.getElementById('music-artist').value;
+        const album = document.getElementById('music-album').value;
+        const genre = document.getElementById('music-genre').value;
+        const agreement = document.getElementById('mint-agreement').value;
 
-    if (!file || !title || !artist) return alert('Please fill all the required fields.');
+        document.getElementById('upload-spinner').style.display = 'block';
+        document.getElementById('progress-bar').style.display = 'block';
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-        const buffer = Buffer.from(reader.result);
-        const tokenURI = await uploadToIPFS(buffer);
-        await mintNFT(tokenURI, title, artist, album, genre, agreement);
-        alert('File uploaded and NFT minted successfully!');
-        loadTracks();
-    };
-    reader.readAsArrayBuffer(file);
+        const tokenURI = await uploadToIPFS(file);
 
-    const preview = document.getElementById('music-preview');
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = 'block';
+        const accounts = await web3.eth.getAccounts();
+        const contract = await loadContract();
+        await contract.methods.createNFT(tokenURI, title, artist, album, agreement).send({ from: accounts[0] });
+
+        alert('NFT created successfully!');
+    } catch (error) {
+        console.error('Error creating NFT:', error);
+        alert('Failed to create NFT. Please try again.');
+    } finally {
+        document.getElementById('upload-spinner').style.display = 'none';
+        document.getElementById('progress-bar').style.display = 'none';
+    }
 }
 
-async function uploadToIPFS(buffer) {
-    // Placeholder for IPFS upload logic
-    // Return the IPFS URL of the uploaded file
-    return "ipfs://fake-ipfs-url";
-}
+async function uploadToIPFS(file) {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
 
-async function mintNFT(tokenURI, title, artist, album, genre, agreement) {
-    const accounts = await web3.eth.getAccounts();
-    const contract = await loadContract();
-    await contract.methods.createNFT(tokenURI, title, artist, album, genre, agreement).send({ from: accounts[0] });
+        const response = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer YOUR_PINATA_JWT`
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+        return `ipfs://${data.IpfsHash}`;
+    } catch (error) {
+        console.error('Error uploading to IPFS:', error);
+        alert('Failed to upload file. Please try again.');
+        throw error;
+    }
 }
 
 async function loadContract() {
-    const response = await fetch('/contracts/NFTMusic.json');
-    const data = await response.json();
-    const netId = await web3.eth.net.getId();
-    const deployedNetwork = data.networks[netId];
-    return new web3.eth.Contract(data.abi, deployedNetwork && deployedNetwork.address);
-}
-
-async function loadTracks() {
-    // Implement the logic to load and display tracks from the marketplace
+    try {
+        const response = await fetch('/contracts/NFTMusic.json');
+        const data = await response.json();
+        const netId = await web3.eth.net.getId();
+        const deployedNetwork = data.networks[netId];
+        return new web3.eth.Contract(data.abi, deployedNetwork && deployedNetwork.address);
+    } catch (error) {
+        console.error('Error loading contract:', error);
+        alert('Failed to load contract. Please try again.');
+        throw error;
+    }
 }
 
 function loadUserDashboard() {
-    // Load user tracks and royalty distribution data
+    try {
+        // Load user tracks and royalty distribution data
+    } catch (error) {
+        console.error('Error loading user dashboard:', error);
+        alert('Failed to load user dashboard. Please try again.');
+    }
 }
 
 function loadMarketplace() {
-    // Load NFTs available in the marketplace
+    try {
+        // Load NFTs available in the marketplace
+    } catch (error) {
+        console.error('Error loading marketplace:', error);
+        alert('Failed to load marketplace. Please try again.');
+    }
 }
 
 function handleFeedback(event) {
     event.preventDefault();
-    const feedbackText = document.getElementById('feedback-text').value;
-    if (!feedbackText) return alert('Feedback cannot be empty.');
+    try {
+        const feedbackText = document.getElementById('feedback-text').value;
+        if (!feedbackText) return alert('Feedback cannot be empty.');
 
-    const feedbackList = document.getElementById('feedback-list');
-    const feedbackItem = document.createElement('div');
-    feedbackItem.textContent = feedbackText;
-    feedbackList.appendChild(feedbackItem);
+        const feedbackList = document.getElementById('feedback-list');
+        const feedbackItem = document.createElement('div');
+        feedbackItem.textContent = feedbackText;
+        feedbackList.appendChild(feedbackItem);
 
-    document.getElementById('feedback-text').value = '';
-    saveFeedback(feedbackText);
+        document.getElementById('feedback-text').value = '';
+        saveFeedback(feedbackText);
+    } catch (error) {
+        console.error('Error handling feedback:', error);
+        alert('Failed to submit feedback. Please try again.');
+    }
 }
 
 function saveFeedback(feedback) {
-    let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
-    feedbacks.push(feedback);
-    localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+    try {
+        let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
+        feedbacks.push(feedback);
+        localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+    } catch (error) {
+        console.error('Error saving feedback:', error);
+        alert('Failed to save feedback. Please try again.');
+    }
 }
 
 function loadFeedback() {
-    let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
-    const feedbackList = document.getElementById('feedback-list');
-    feedbacks.forEach(feedback => {
-        const feedbackItem = document.createElement('div');
-        feedbackItem.textContent = feedback;
-        feedbackList.appendChild(feedbackItem);
-    });
+    try {
+        let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
+        const feedbackList = document.getElementById('feedback-list');
+        feedbacks.forEach(feedback => {
+            const feedbackItem = document.createElement('div');
+            feedbackItem.textContent = feedback;
+            feedbackList.appendChild(feedbackItem);
+        });
+    } catch (error) {
+        console.error('Error loading feedback:', error);
+        alert('Failed to load feedback. Please try again.');
+    }
 }
 
 function toggleTheme() {
-    document.body.classList.toggle('dark');
+    try {
+        document.body.classList.toggle('dark');
+    } catch (error) {
+        console.error('Error toggling theme:', error);
+        alert('Failed to toggle theme. Please try again.');
+    }
+}
+
+function loadWeb3Activity() {
+    const web3ActivityFeed = document.getElementById('web3-activity-feed');
+    web3ActivityFeed.innerHTML = ''; // Clear existing feed
+
+    web3.eth.subscribe('pendingTransactions', (error, txHash) => {
+        if (error) {
+            console.error('Error subscribing to pending transactions:', error);
+            return;
+        }
+
+        web3.eth.getTransaction(txHash, (err, tx) => {
+            if (err) {
+                console.error('Error getting transaction:', err);
+                return;
+            }
+
+            const txElement = document.createElement('p');
+            txElement.textContent = `Tx Hash: ${txHash} - From: ${tx.from} - To: ${tx.to} - Value: ${web3.utils.fromWei(tx.value, 'ether')} ETH`;
+            web3ActivityFeed.prepend(txElement); // Add to the top of the feed
+        });
+    });
 }
