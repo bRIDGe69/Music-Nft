@@ -5,87 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NFT Music Marketplace</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <header>
+    <header class="bg-dark text-white text-center p-3 sticky-top">
         <h1>NFT Music Marketplace</h1>
-        <nav>
-            <a href="#about">About</a>
-            <a href="#upload">Upload</a>
-            <a href="#marketplace">Marketplace</a>
-            <a href="#profile">Profile</a>
-            <a href="#dashboard">Dashboard</a>
-            <a href="#feedback">Feedback</a>
+        <nav class="nav justify-content-center">
+            <a class="nav-link text-white" href="#about">About</a>
+            <a class="nav-link text-white" href="#upload">Upload</a>
+            <a class="nav-link text-white" href="#marketplace">Marketplace</a>
+            <a class="nav-link text-white" href="#profile">Profile</a>
+            <a class="nav-link text-white" href="#dashboard">Dashboard</a>
+            <a class="nav-link text-white" href="#feedback">Feedback</a>
+            <a class="nav-link text-white" href="#web3-activity">Web3 Activity</a>
         </nav>
-        <button id="theme-toggle">Toggle Theme</button>
+        <button id="theme-toggle" class="btn btn-secondary">Toggle Theme</button>
     </header>
-    <main>
-        <section id="about">
+    <main class="container mt-4">
+        <section id="about" class="mb-5">
             <h2>About</h2>
-            <img src="images/about.png" alt="About" class="section-image">
             <p>Revolutionizing music distribution using NFTs and blockchain technology. Mint your tracks as NFTs and share them with the world. Earn royalties directly to your crypto wallet.</p>
             <p>As a solo artist, this platform provides you with the tools to control your music assets fully, offering your fans unique ways to own a piece of your music.</p>
         </section>
-        <section id="upload">
+        <section id="upload" class="mb-5">
             <h2>Upload Your Music</h2>
-            <img src="images/upload.png" alt="Upload" class="section-image">
-            <form id="upload-form">
-                <input type="file" id="music-file" accept="audio/*" required>
-                <input type="text" id="music-title" placeholder="Title" required>
-                <input type="text" id="music-artist" placeholder="Artist" required>
-                <input type="text" id="music-album" placeholder="Album">
-                <input type="text" id="music-genre" placeholder="Genre">
-                <select id="mint-agreement" required>
-                    <option value="exclusive">Exclusive Rights</option>
-                    <option value="limited">Limited Edition</option>
-                    <option value="regular">Regular License</option>
-                </select>
-                <button type="submit">Upload</button>
+            <form id="upload-form" class="needs-validation" novalidate>
+                <div class="form-group">
+                    <label for="music-file">Music File</label>
+                    <input type="file" class="form-control" id="music-file" accept="audio/*" required>
+                    <div class="invalid-feedback">Please select a music file.</div>
+                </div>
+                <div class="form-group">
+                    <label for="music-title">Title</label>
+                    <input type="text" class="form-control" id="music-title" placeholder="Title" required>
+                    <div class="invalid-feedback">Please enter a title.</div>
+                </div>
+                <div class="form-group">
+                    <label for="music-artist">Artist</label>
+                    <input type="text" class="form-control" id="music-artist" placeholder="Artist" required>
+                    <div class="invalid-feedback">Please enter an artist.</div>
+                </div>
+                <div class="form-group">
+                    <label for="music-album">Album</label>
+                    <input type="text" class="form-control" id="music-album" placeholder="Album">
+                </div>
+                <div class="form-group">
+                    <label for="music-genre">Genre</label>
+                    <input type="text" class="form-control" id="music-genre" placeholder="Genre">
+                </div>
+                <div class="form-group">
+                    <label for="mint-agreement">Mint Agreement</label>
+                    <select class="form-control" id="mint-agreement" required>
+                        <option value="exclusive">Exclusive Rights</option>
+                        <option value="limited">Limited Edition</option>
+                        <option value="regular">Regular</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a mint agreement.</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Mint NFT</button>
+                <div id="upload-spinner" class="spinner-border text-primary" style="display: none;" role="status">
+                    <span class="sr-only">Uploading...</span>
+                </div>
             </form>
-            <audio controls id="music-preview" style="display:none;"></audio>
+            <h3 id="uploading-status" class="mt-3" style="display:none;">Uploading...</h3>
+            <progress id="progress-bar" max="100" value="0" style="display:none;" class="w-100"></progress>
         </section>
-        <section id="upload-progress" style="display:none;">
-            <h3>Uploading...</h3>
-            <progress id="progress-bar" max="100" value="0"></progress>
-        </section>
-        <section id="notifications"></section>
-        <section id="marketplace">
+        <section id="notifications" class="mb-5"></section>
+        <section id="marketplace" class="mb-5">
             <h2>Marketplace</h2>
-            <img src="images/marketplace.png" alt="Marketplace" class="section-image">
             <div id="nft-marketplace"></div>
         </section>
-        <section id="profile">
+        <section id="profile" class="mb-5">
             <h2>Your Profile</h2>
-            <img src="images/profile.png" alt="Profile" class="section-image">
             <div id="user-nfts"></div>
             <div id="user-tracks"></div>
-            <form id="profile-form">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit">Save</button>
+            <form id="profile-form" class="needs-validation" novalidate>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Username" required>
+                    <div class="invalid-feedback">Please enter a username.</div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Email" required>
+                    <div class="invalid-feedback">Please enter an email.</div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                    <div class="invalid-feedback">Please enter a password.</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
             </form>
         </section>
-        <section id="dashboard">
+        <section id="dashboard" class="mb-5">
             <h2>Dashboard</h2>
-            <img src="images/dashboard.png" alt="Dashboard" class="section-image">
             <div id="user-analytics"></div>
             <div id="royalty-distribution"></div>
         </section>
-        <section id="meta-mask">
-            <h2>Get MetaMask</h2>
-            <img src="images/metamask.png" alt="MetaMask" class="section-image">
-            <p>Use MetaMask to connect to the blockchain and manage your NFTs.</p>
+        <section id="web3-activity" class="mb-5">
+            <h2>Web3 Activity</h2>
+            <div id="web3-activity-feed" class="activity-feed">
+                <p>Loading Web3 activity...</p>
+            </div>
         </section>
-        <section id="feedback">
+        <section id="feedback" class="mb-5">
             <h2>Feedback</h2>
-            <form id="feedback-form">
-                <textarea id="feedback-text" placeholder="Your feedback" required></textarea>
-                <button type="submit">Submit Feedback</button>
+            <form id="feedback-form" class="needs-validation" novalidate>
+                <div class="form-group">
+                    <label for="feedback-text">Your Feedback</label>
+                    <textarea class="form-control" id="feedback-text" placeholder="Your feedback" required></textarea>
+                    <div class="invalid-feedback">Please enter your feedback.</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Feedback</button>
             </form>
-            <div id="feedback-list"></div>
+            <div id="feedback-list" class="mt-3"></div>
         </section>
     </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.3.5/dist/web3.min.js"></script>
     <script src="script.js"></script>
 </body>
