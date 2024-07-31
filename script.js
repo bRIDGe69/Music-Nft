@@ -1,6 +1,3 @@
-### Enhanced `script.js`
-
-```javascript
 document.addEventListener('DOMContentLoaded', () => {
     loadWeb3();
     loadUserProfile();
@@ -75,9 +72,14 @@ async function handleUpload(event) {
 
         const accounts = await web3.eth.getAccounts();
         const contract = await loadContract();
-        await contract.methods.createNFT(tokenURI, title, artist, album, agreement).send({ from: accounts[0] });
+        const receipt = await contract.methods.createNFT(tokenURI, title, artist, album, agreement).send({ from: accounts[0] });
+
+        logWeb3Activity(`Minted NFT with Tx Hash: ${receipt.transactionHash}`);
 
         alert('NFT created successfully!');
+        
+        playMusic(file);
+
     } catch (error) {
         console.error('Error creating NFT:', error);
         alert('Failed to create NFT. Please try again.');
@@ -216,4 +218,19 @@ function loadWeb3Activity() {
             web3ActivityFeed.prepend(txElement); // Add to the top of the feed
         });
     });
+}
+
+function logWeb3Activity(message) {
+    const web3ActivityFeed = document.getElementById('web3-activity-feed');
+    const activityElement = document.createElement('p');
+    activityElement.textContent = message;
+    web3ActivityFeed.prepend(activityElement);
+}
+
+function playMusic(file) {
+    const audio = document.createElement('audio');
+    audio.controls = true;
+    audio.src = URL.createObjectURL(file);
+    document.getElementById('audio-player').appendChild(audio);
+    audio.play();
 }
