@@ -1,67 +1,53 @@
+/* styles.css */
+
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #f0f0f0;
+    background-color: #f8f9fa;
     transition: background-color 0.5s, color 0.5s;
 }
 
 body.dark {
-    background-color: #333;
+    background-color: #343a40;
     color: #fff;
 }
 
 header {
-    background-color: #333;
-    color: white;
     padding: 1em;
-    width: 100%;
     text-align: center;
-    position: relative;
-}
-
-header nav {
-    margin-top: 1em;
 }
 
 header nav a {
-    color: white;
+    color: #fff;
     margin: 0 1em;
     text-decoration: none;
+    transition: color 0.3s;
 }
 
 header nav a:hover {
-    text-decoration: underline;
+    color: #ff9800;
 }
 
 #theme-toggle {
-    position: absolute;
-    top: 1em;
-    right: 1em;
-    background-color: #555;
-    color: white;
-    border: none;
-    padding: 0.5em 1em;
-    cursor: pointer;
-}
-
-#theme-toggle:hover {
-    background-color: #777;
+    margin-top: 1em;
 }
 
 main {
-    width: 80%;
     margin: 2em auto;
+    padding: 0 1em;
 }
 
 section {
     background: white;
-    padding: 1em;
+    padding: 2em;
     margin-bottom: 2em;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+section:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
 }
 
 button {
@@ -70,6 +56,8 @@ button {
     color: white;
     border: none;
     cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
 }
 
 button:hover {
@@ -80,12 +68,16 @@ button:hover {
     max-width: 100%;
     height: auto;
     margin-bottom: 1em;
+    border-radius: 8px;
+    loading: lazy;
 }
 
 #feedback-form textarea {
     width: 100%;
     padding: 0.5em;
     margin-bottom: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 #feedback-list {
@@ -96,4 +88,34 @@ button:hover {
     background: #eee;
     padding: 0.5em;
     margin-bottom: 0.5em;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    main {
+        width: 95%;
+    }
+
+    header nav a {
+        display: block;
+        margin: 0.5em 0;
+    }
+
+    #theme-toggle {
+        top: 0.5em;
+        right: 0.5em;
+    }
+}
+
+.activity-feed {
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #f1f1f1;
+    padding: 1em;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.activity-feed p {
+    margin: 0.5em 0;
 }
