@@ -116,12 +116,14 @@ async function loadContract() {
         const response = await fetch('contracts/NFTMusic.json'); // Ensure this path is correct
         const data = await response.json();
         const netId = await web3.eth.net.getId();
+        console.log('Network ID:', netId);
         const deployedNetwork = data.networks[netId];
         
         if (!deployedNetwork) {
-            throw new Error('Contract not deployed on the current network');
+            throw new Error(`Contract not deployed on the current network (network ID: ${netId})`);
         }
 
+        console.log('Contract Address:', deployedNetwork.address);
         return new web3.eth.Contract(data.abi, deployedNetwork && deployedNetwork.address);
     } catch (error) {
         console.error('Error loading contract:', error);
