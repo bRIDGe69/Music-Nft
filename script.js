@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('upload-form').addEventListener('submit', handleUpload);
     document.getElementById('preview-button').addEventListener('click', previewMusic);
+    document.getElementById('music-file').addEventListener('change', extractMetadata);
 });
 
 async function loadWeb3() {
@@ -176,4 +177,32 @@ function previewMusic() {
     } else {
         alert('Please select a music file to preview.');
     }
+}
+
+function extractMetadata() {
+    const file = document.getElementById('music-file').files[0];
+    if (file) {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            audioContext.decodeAudioData(event.target.result, (buffer) => {
+                const duration = buffer.duration;
+                const sampleRate = buffer.sampleRate;
+                displayMetadata(duration, sampleRate);
+            }, (error) => {
+                console.error('Error decoding audio file:', error);
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    }
+}
+
+function displayMetadata(duration, sampleRate) {
+    const durationElement = document.createElement('p');
+    durationElement.textContent = `Duration: ${Math.floor(duration / 60)}:${Math.floor(duration % 60).toString().padStart(2, '0')} minutes`;
+    const sampleRateElement = document.createElement('p');
+    sampleRateElement.textContent = `Sample Rate: ${sampleRate} Hz`;
+    const metadataSection = document.getElementById('audio-player-section');
+    metadataSection.appendChild(durationElement);
+    metadataSection.appendChild(sampleRateElement);
 }
