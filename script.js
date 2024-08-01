@@ -1,16 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadWeb3();
-    loadUserProfile();
     loadUserDashboard();
     loadMarketplace();
     loadWeb3Activity();
 
     document.getElementById('upload-form').addEventListener('submit', handleUpload);
-    document.getElementById('profile-form').addEventListener('submit', saveUserProfile);
-    document.getElementById('feedback-form').addEventListener('submit', handleFeedback);
-    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-
-    loadFeedback();
+    document.getElementById('preview-button').addEventListener('click', previewMusic);
 });
 
 async function loadWeb3() {
@@ -29,36 +24,20 @@ async function loadWeb3() {
     }
 }
 
-function loadUserProfile() {
-    try {
-        const username = localStorage.getItem('username');
-        const email = localStorage.getItem('email');
-        if (username) document.getElementById('username').value = username;
-        if (email) document.getElementById('email').value = email;
-    } catch (error) {
-        console.error('Error loading user profile:', error);
-        alert('Failed to load user profile. Please try again.');
-    }
-}
-
-function saveUserProfile(event) {
-    event.preventDefault();
-    try {
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        localStorage.setItem('username', username);
-        localStorage.setItem('email', email);
-        alert('Profile saved successfully!');
-    } catch (error) {
-        console.error('Error saving user profile:', error);
-        alert('Failed to save user profile. Please try again.');
-    }
-}
-
 async function handleUpload(event) {
     event.preventDefault();
     try {
         const file = document.getElementById('music-file').files[0];
+        if (!file) {
+            alert('Please select a music file to upload.');
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) { // 10 MB size limit
+            alert('File size exceeds 10 MB. Please select a smaller file.');
+            return;
+        }
+
         const title = document.getElementById('music-title').value;
         const artist = document.getElementById('music-artist').value;
         const album = document.getElementById('music-album').value;
@@ -77,8 +56,6 @@ async function handleUpload(event) {
         logWeb3Activity(`Minted NFT with Tx Hash: ${receipt.transactionHash}`);
 
         alert('NFT created successfully!');
-        
-        playMusic(file);
 
     } catch (error) {
         console.error('Error creating NFT:', error);
@@ -99,7 +76,13 @@ async function uploadToIPFS(file) {
             headers: {
                 'Authorization': `Bearer YOUR_PINATA_JWT`
             },
-            body: formData
+            body: formData,
+            onprogress: (event) => {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    document.getElementById('progress-bar').value = percentComplete;
+                }
+            }
         });
 
         const data = await response.json();
@@ -150,60 +133,6 @@ function loadMarketplace() {
     }
 }
 
-function handleFeedback(event) {
-    event.preventDefault();
-    try {
-        const feedbackText = document.getElementById('feedback-text').value;
-        if (!feedbackText) return alert('Feedback cannot be empty.');
-
-        const feedbackList = document.getElementById('feedback-list');
-        const feedbackItem = document.createElement('div');
-        feedbackItem.textContent = feedbackText;
-        feedbackList.appendChild(feedbackItem);
-
-        document.getElementById('feedback-text').value = '';
-        saveFeedback(feedbackText);
-    } catch (error) {
-        console.error('Error handling feedback:', error);
-        alert('Failed to submit feedback. Please try again.');
-    }
-}
-
-function saveFeedback(feedback) {
-    try {
-        let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
-        feedbacks.push(feedback);
-        localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
-    } catch (error) {
-        console.error('Error saving feedback:', error);
-        alert('Failed to save feedback. Please try again.');
-    }
-}
-
-function loadFeedback() {
-    try {
-        let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
-        const feedbackList = document.getElementById('feedback-list');
-        feedbacks.forEach(feedback => {
-            const feedbackItem = document.createElement('div');
-            feedbackItem.textContent = feedback;
-            feedbackList.appendChild(feedbackItem);
-        });
-    } catch (error) {
-        console.error('Error loading feedback:', error);
-        alert('Failed to load feedback. Please try again.');
-    }
-}
-
-function toggleTheme() {
-    try {
-        document.body.classList.toggle('dark');
-    } catch (error) {
-        console.error('Error toggling theme:', error);
-        alert('Failed to toggle theme. Please try again.');
-    }
-}
-
 function loadWeb3Activity() {
     const web3ActivityFeed = document.getElementById('web3-activity-feed');
     web3ActivityFeed.innerHTML = ''; // Clear existing feed
@@ -234,10 +163,17 @@ function logWeb3Activity(message) {
     web3ActivityFeed.prepend(activityElement);
 }
 
-function playMusic(file) {
-    const audio = document.createElement('audio');
-    audio.controls = true;
-    audio.src = URL.createObjectURL(file);
-    document.getElementById('audio-player').appendChild(audio);
-    audio.play();
+function previewMusic() {
+    const file = document.getElementById('music-file').files[0];
+    if (file) {
+        const audio = document.createElement('audio');
+        audio.controls = true;
+        audio.src = URL.createObjectURL(file);
+        const audioPlayer = document.getElementById('audio-player');
+        audioPlayer.innerHTML = ''; // Clear previous audio
+        audioPlayer.appendChild(audio);
+        audio.play();
+    } else {
+        alert('Please select a music file to preview.');
+    }
 }
