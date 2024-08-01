@@ -14,12 +14,9 @@
             <a class="nav-link text-white" href="#about">About</a>
             <a class="nav-link text-white" href="#upload">Upload</a>
             <a class="nav-link text-white" href="#marketplace">Marketplace</a>
-            <a class="nav-link text-white" href="#profile">Profile</a>
             <a class="nav-link text-white" href="#dashboard">Dashboard</a>
-            <a class="nav-link text-white" href="#feedback">Feedback</a>
             <a class="nav-link text-white" href="#web3-activity">Web3 Activity</a>
         </nav>
-        <button id="theme-toggle" class="btn btn-secondary">Toggle Theme</button>
     </header>
     <main class="container mt-4">
         <section id="about" class="mb-5">
@@ -62,6 +59,7 @@
                     </select>
                     <div class="invalid-feedback">Please select a mint agreement.</div>
                 </div>
+                <button type="button" id="preview-button" class="btn btn-secondary">Preview Music</button>
                 <button type="submit" class="btn btn-primary">Mint NFT</button>
                 <div id="upload-spinner" class="spinner-border text-primary" style="display: none;" role="status">
                     <span class="sr-only">Uploading...</span>
@@ -75,29 +73,6 @@
             <h2>Marketplace</h2>
             <div id="nft-marketplace"></div>
         </section>
-        <section id="profile" class="mb-5">
-            <h2>Your Profile</h2>
-            <div id="user-nfts"></div>
-            <div id="user-tracks"></div>
-            <form id="profile-form" class="needs-validation" novalidate>
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control" id="username" placeholder="Username" required>
-                    <div class="invalid-feedback">Please enter a username.</div>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="Email" required>
-                    <div class="invalid-feedback">Please enter an email.</div>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Password" required>
-                    <div class="invalid-feedback">Please enter a password.</div>
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </form>
-        </section>
         <section id="dashboard" class="mb-5">
             <h2>Dashboard</h2>
             <div id="user-analytics"></div>
@@ -108,18 +83,6 @@
             <div id="web3-activity-feed" class="activity-feed">
                 <p>Loading Web3 activity...</p>
             </div>
-        </section>
-        <section id="feedback" class="mb-5">
-            <h2>Feedback</h2>
-            <form id="feedback-form" class="needs-validation" novalidate>
-                <div class="form-group">
-                    <label for="feedback-text">Your Feedback</label>
-                    <textarea class="form-control" id="feedback-text" placeholder="Your feedback" required></textarea>
-                    <div class="invalid-feedback">Please enter your feedback.</div>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit Feedback</button>
-            </form>
-            <div id="feedback-list" class="mt-3"></div>
         </section>
         <section id="audio-player-section" class="mb-5">
             <h2>Audio Player</h2>
