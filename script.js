@@ -34,11 +34,6 @@ async function handleUpload(event) {
             return;
         }
 
-        if (file.size > 10 * 1024 * 1024) { // 10 MB size limit
-            alert('File size exceeds 10 MB. Please select a smaller file.');
-            return;
-        }
-
         const title = document.getElementById('music-title').value;
         const artist = document.getElementById('music-artist').value;
         const album = document.getElementById('music-album').value;
@@ -77,13 +72,7 @@ async function uploadToIPFS(file) {
             headers: {
                 'Authorization': `Bearer YOUR_PINATA_JWT`
             },
-            body: formData,
-            onprogress: (event) => {
-                if (event.lengthComputable) {
-                    const percentComplete = (event.loaded / event.total) * 100;
-                    document.getElementById('progress-bar').value = percentComplete;
-                }
-            }
+            body: formData
         });
 
         const data = await response.json();
@@ -97,17 +86,15 @@ async function uploadToIPFS(file) {
 
 async function loadContract() {
     try {
-        const response = await fetch('contracts/NFTMusic.json'); // Ensure this path is correct
+        const response = await fetch('contracts/NFTMusic.json');
         const data = await response.json();
         const netId = await web3.eth.net.getId();
-        console.log('Network ID:', netId);
         const deployedNetwork = data.networks[netId];
         
         if (!deployedNetwork) {
             throw new Error(`Contract not deployed on the current network (network ID: ${netId})`);
         }
 
-        console.log('Contract Address:', deployedNetwork.address);
         return new web3.eth.Contract(data.abi, deployedNetwork && deployedNetwork.address);
     } catch (error) {
         console.error('Error loading contract:', error);
