@@ -85,7 +85,7 @@ async function uploadToIPFS(file) {
 
 async function loadContract() {
     try {
-        const response = await fetch('contracts/NFTMusic.json');
+        const response = await fetch('/contracts/NFTMusic.json');
         const data = await response.json();
         const netId = await web3.eth.net.getId();
         const deployedNetwork = data.networks[netId];
