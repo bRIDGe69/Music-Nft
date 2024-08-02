@@ -20,8 +20,7 @@ async function loadWeb3() {
             alert('Please install MetaMask to use this feature!');
         }
     } catch (error) {
-        console.error('Error loading web3:', error);
-        alert('Failed to load web3. Please try again.');
+        logWeb3Activity(`Error loading web3: ${error.message}`);
     }
 }
 
@@ -54,8 +53,8 @@ async function handleUpload(event) {
         alert('NFT created successfully!');
 
     } catch (error) {
-        console.error('Error creating NFT:', error);
-        alert('Failed to create NFT. Please try again.');
+        logWeb3Activity(`Error creating NFT: ${error.message}`);
+        alert('Failed to create NFT. Please check the Web3 activity log for more details.');
     } finally {
         document.getElementById('upload-spinner').style.display = 'none';
         document.getElementById('progress-bar').style.display = 'none';
@@ -78,8 +77,8 @@ async function uploadToIPFS(file) {
         const data = await response.json();
         return `ipfs://${data.IpfsHash}`;
     } catch (error) {
-        console.error('Error uploading to IPFS:', error);
-        alert('Failed to upload file. Please try again.');
+        logWeb3Activity(`Error uploading to IPFS: ${error.message}`);
+        alert('Failed to upload file. Please check the Web3 activity log for more details.');
         throw error;
     }
 }
@@ -97,8 +96,8 @@ async function loadContract() {
 
         return new web3.eth.Contract(data.abi, deployedNetwork && deployedNetwork.address);
     } catch (error) {
-        console.error('Error loading contract:', error);
-        alert('Failed to load contract. Please check the console for more details.');
+        logWeb3Activity(`Error loading contract: ${error.message}`);
+        alert('Failed to load contract. Please check the Web3 activity log for more details.');
         throw error;
     }
 }
@@ -107,8 +106,7 @@ function loadUserDashboard() {
     try {
         // Load user tracks and royalty distribution data
     } catch (error) {
-        console.error('Error loading user dashboard:', error);
-        alert('Failed to load user dashboard. Please try again.');
+        logWeb3Activity(`Error loading user dashboard: ${error.message}`);
     }
 }
 
@@ -116,8 +114,7 @@ function loadMarketplace() {
     try {
         // Load NFTs available in the marketplace
     } catch (error) {
-        console.error('Error loading marketplace:', error);
-        alert('Failed to load marketplace. Please try again.');
+        logWeb3Activity(`Error loading marketplace: ${error.message}`);
     }
 }
 
@@ -127,13 +124,13 @@ function loadWeb3Activity() {
 
     web3.eth.subscribe('pendingTransactions', (error, txHash) => {
         if (error) {
-            console.error('Error subscribing to pending transactions:', error);
+            logWeb3Activity(`Error subscribing to pending transactions: ${error.message}`);
             return;
         }
 
         web3.eth.getTransaction(txHash, (err, tx) => {
             if (err) {
-                console.error('Error getting transaction:', err);
+                logWeb3Activity(`Error getting transaction: ${err.message}`);
                 return;
             }
 
@@ -161,6 +158,7 @@ function previewMusic() {
         audioPlayer.innerHTML = ''; // Clear previous audio
         audioPlayer.appendChild(audio);
         audio.play();
+        visualizeAudio(audio);
     } else {
         alert('Please select a music file to preview.');
     }
@@ -177,7 +175,7 @@ function extractMetadata() {
                 const sampleRate = buffer.sampleRate;
                 displayMetadata(duration, sampleRate);
             }, (error) => {
-                console.error('Error decoding audio file:', error);
+                logWeb3Activity(`Error decoding audio file: ${error.message}`);
             });
         };
         reader.readAsArrayBuffer(file);
@@ -192,4 +190,45 @@ function displayMetadata(duration, sampleRate) {
     const metadataSection = document.getElementById('audio-player-section');
     metadataSection.appendChild(durationElement);
     metadataSection.appendChild(sampleRateElement);
+}
+
+function visualizeAudio(audio) {
+    const canvas = document.getElementById('audio-visualizer');
+    const canvasCtx = canvas.getContext('2d');
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const audioSrc = audioContext.createMediaElementSource(audio);
+    const analyser = audioContext.createAnalyser();
+    
+    audioSrc.connect(analyser);
+    analyser.connect(audioContext.destination);
+    
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    function draw() {
+        requestAnimationFrame(draw);
+        
+        analyser.getByteFrequencyData(dataArray);
+        
+        canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const barWidth = (canvas.width / bufferLength) * 2.5;
+        let barHeight;
+        let x = 0;
+        
+        for (let i = 0; i < bufferLength; i++) {
+            barHeight = dataArray[i];
+            
+            canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
+            canvasCtx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight / 2);
+            
+            x += barWidth + 1;
+        }
+    }
+    
+    draw();
 }
